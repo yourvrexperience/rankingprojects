@@ -97,11 +97,11 @@ A full walkthrough of the project concept and functionality:
 ├── backend/
 │   └── Python scripts implementing API endpoints
 │
-├── rankingprojects_structure.sql
-│   └── Empty database schema
-│
-├── rankingprojects_sampledata.sql
-│   └── Database populated with sample data
+├── backend/
+│   └── rankingprojects_structure.sql
+│   │   └── Empty database schema
+│   └── rankingprojects_sampledata.sql
+│       └── Database populated with sample data
 │
 └── README.md
 ```
