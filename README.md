@@ -190,14 +190,3 @@ Not every great contributor is part of a winning team —
 but every ecosystem benefits when **talent is visible, connected, and valued**.
 
 This project exists to make that possible.
-
----
-
-If you want, next we can:
-
-* Add **badges** (license, status, tech stack)
-* Write a **CONTRIBUTING.md**
-* Create a **GitHub-friendly architecture diagram**
-* Adjust tone (more academic / more startup / more community-driven)
-
-Just tell me 💡
