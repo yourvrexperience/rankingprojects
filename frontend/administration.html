@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title data-i18n="adm.project.administration"></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:#f9fafb;
+      color:#111827;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px;
+      height: 100vh; 
+    }
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      border-radius:16px;
+      box-shadow:0 8px 24px rgba(0,0,0,.06);
+      position: relative; /* REQUIRED for absolute positioning */
+    }
+    .title{
+      font-size:16px;
+      font-weight:900;
+      margin:0;
+    }
+    .sub{
+      font-size:12px;
+      color:#6b7280;
+      margin-top:2px;
+    }
+    .btnrow{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    button{
+      border:1px solid #e5e7eb;
+      background:#111827;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:13px;
+    }
+    button.secondary{
+      background:#fff;
+      color:#111827;
+    }
+    button.danger{
+      background:#b91c1c;
+      border-color:#b91c1c;
+    }
+    button:disabled{ opacity:.6; cursor:not-allowed; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border:1px solid #e5e7eb;
+      background:#fff;
+      border-radius:16px;
+      padding:14px;
+      box-shadow:0 8px 22px rgba(0,0,0,.06);
+    }
+    .card h3{
+      margin:0 0 10px 0;
+      font-size:14px;
+      font-weight:900;
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      font-weight:800;
+      margin:10px 0 6px;
+      color:#111827;
+    }
+    input, textarea{
+      width:100%;
+      box-sizing:border-box;
+      border:1px solid #d1d5db;
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:13px;
+      background:#fff;
+      color:#111827;
+    }
+    input:focus, textarea:focus{
+      outline:none;
+      border-color:#111827;
+    }
+    textarea{ min-height:140px; resize:vertical; }
+
+    details{
+      margin-top:10px;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      overflow:hidden;
+      background:#fafafa;
+    }
+    summary{
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:12px;
+      list-style:none;
+    }
+    details[open] summary{ border-bottom:1px solid #e5e7eb; background:#f3f4f6; }
+    .preview{
+      padding:10px 12px;
+      background:#fff;
+    }
+    .preview iframe{
+      width:100%;
+      height:320px;
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+    }
+
+    .msg{
+      margin-top:10px;
+      font-size:13px;
+      min-height:18px;
+    }
+    .msg.ok{ color:#065f46; }
+    .msg.err{ color:#b91c1c; }
+
+    /* ===== Evaluation (mirrors your overlay feel) ===== */
+    .sc-eval{ display:flex; flex-direction:column; gap:12px; }
+    .sc-eval-header{ display:flex; gap:12px; align-items:center; }
+    .sc-eval-score{
+      display:flex;
+      align-items:flex-end;
+      gap:4px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      min-width:92px;
+      justify-content:center;
+    }
+    .sc-eval-score-num{ font-size:28px; font-weight:900; line-height:1; }
+    .sc-eval-score-den{ font-size:13px; font-weight:900; opacity:.7; padding-bottom:2px; }
+
+    .sc-score-good{ background:#ecfdf5; }
+    .sc-score-mid{  background:#fffbeb; }
+    .sc-score-low{  background:#fef2f2; }
+    .sc-score-na{   background:#f9fafb; }
+
+    .sc-eval-meta{ min-width:0; }
+    .sc-eval-title{ font-weight:900; font-size:14px; margin-bottom:2px; }
+    .sc-eval-sub{ font-size:12px; color:#6b7280; }
+
+    .sc-eval-section{
+      background:#f9fafb;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:10px;
+    }
+    .sc-eval-h{
+      font-weight:900;
+      font-size:13px;
+      margin-bottom:6px;
+    }
+    .sc-eval-text{
+      white-space:pre-wrap;
+      font-size:12.5px;
+      line-height:1.45;
+      color:#111827;
+    }
+    .sc-eval-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .sc-eval-grid{ grid-template-columns:1fr; }
+    }
+    .sc-eval-card{
+      background:#f9fafb;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:10px;
+    }
+    .sc-eval-list{
+      margin:0;
+      padding-left:18px;
+      font-size:12.5px;
+      line-height:1.45;
+    }
+    .sc-empty{ font-size:12.5px; color:#6b7280; }
+    code.small{ font-size:12px; background:#f3f4f6; padding:2px 6px; border-radius:8px; }
+
+    /* Overlay styles */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: none;
+    }
+    .overlay-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      width: 80%;
+      height: 80%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #111827;
+    }
+    #overlayDetailFrame {
+      width: 100%;
+      height: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+    }
+    #overlayMessage {
+      display: none;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+      padding: 20px;
+    }
+
+    select{
+        width:100%;
+        box-sizing:border-box;
+        border:1px solid #d1d5db;
+        border-radius:12px;
+        padding:10px 12px;
+        font-size:13px;
+        background:#fff;
+        color:#111827;
+    }
+    select:focus{ outline:none; border-color:#111827; }
+
+    .label-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:12px; /* keeps spacing consistent with your existing labels */
+    }
+
+    .template-btn{
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid #e5e7eb;
+      background:#000000;
+      cursor:pointer;
+      font-size:11px;
+      white-space:nowrap;
+    }
+
+    .template-btn:hover{
+      background:#686868;
+    }   
+
+    .label-table{
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    .label-table td{
+      padding:6px 0;
+      vertical-align:middle;
+    }
+
+    .label-table .cell-right{
+      text-align:right;
+      width:1%;              /* keeps the button compact */
+      white-space:nowrap;    /* prevents wrapping */
+    }
+
+    .btnrow table {
+      border-collapse: collapse;
+    }
+
+    .btnrow td {
+      padding: 10;            /* optional: removes inner gaps */
+    }
+
+    .btnrow table button {
+      width: 100%;
+      display: block;        /* avoids inline sizing quirks */
+    }
+
+    .topbar select{
+      border:1px solid #e5e7eb;
+      background:#fff;
+      color:#111827;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:800;
+      font-size:10px;
+    }
+
+    .topbar-github{
+      position: absolute;
+      left: 50%;
+      bottom: 0px;
+      transform: translateX(-50%);
+      
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      text-decoration: none;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
+
+    .topbar-github:hover{
+      text-decoration: underline;
+      opacity: 1;
+    }    
+  </style>
+  <script type="module" src="js/AdministrationLayout.js"></script>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="topbar">
+      <div>
+        <div class="title" data-i18n="adm.project.administration"></div>
+
+        <!-- NEW: user name row -->
+        <div class="sub" style="display:flex; align-items:center; gap:8px;">
+          <span id="userName">—</span>
+          <button id="btnEditUserName" class="secondary" style="padding:4px 8px; font-size:11px;" data-i18n="adm.project.edit.name">            
+          </button>
+          <button id="btnLogout" class="secondary" style="padding:4px 8px; font-size:11px;" data-i18n="adm.project.logout">
+          </button>
+          <div class="evaluation-sub-form">
+            <select id="langSelect" aria-label="Language"></select>
+          </div>      
+        </div>
+
+        <!-- existing line -->
+        <div class="sub" id="userLine">—</div>
+      </div>
+      <div class="btnrow">
+      <table>
+          <tr>
+            <td><button class="secondary" id="btnConversation" data-i18n="adm.view.conversation">💬 Conversation</button></td>
+          </tr>
+          <tr>
+              <td><button class="secondary" id="btnGo" data-i18n="adm.go.to.classification"></button></td>
+          </tr>              
+        </table>                        
+        <button id="btnSave" data-i18n="adm.save.project"></button>
+        <table>
+          <tr>
+            <td><button class="danger" id="btnDeleteProject" data-i18n="adm.delete.project"></button></td>
+          </tr>
+          <tr>
+              <td><button class="danger" id="btnDeleteUser" data-i18n="adm.delete.user.and.project"></button></td>
+          </tr>              
+        </table>
+      </div>
+      <a
+        href="https://github.com/yourvrexperience/rankingprojects"
+        target="_blank"
+        rel="noopener"
+        class="topbar-github"
+      >
+        ⭐ View on GitHub
+      </a>      
+    </div>
+
+    <div class="grid">
+      <!-- Left: edit form -->
+      <div class="card">
+        <h3 data-i18n="adm.project.data"></h3>
+
+        <label data-i18n="adm.project.name"></label>
+        <input id="title" type="text" data-i18n="adm.input.project.title" data-i18n-attr="placeholder"/>
+
+
+        <label data-i18n="adm.short.description"></label>
+        <input id="description" type="text" data-i18n="adm.input.one.line.description" data-i18n-attr="placeholder" />
+
+        <label data-i18n="adm.category"></label>
+        <select id="category_id"></select>
+        <div class="sub" data-i18n="adm.select.category"></div>
+        <div class="btnrow" style="justify-content:flex-start; margin-top:10px;">
+          <button class="secondary" id="btnFindOutCategoryOfProject" type="button" data-i18n="adm.find.category"></button>
+        </div>
+
+        <label data-i18n="adm.authors"></label>
+        <input id="authors" type="text" data-i18n="adm.placeholder.authors": data-i18n-attr="placeholder" />
+
+        <label data-i18n="adm.project.website"></label>
+        <input id="link" type="url" placeholder="https://www.example.com" />
+
+        <label data-i18n="adm.project.detail"></label>
+        <textarea id="detail" data-i18n="adm.put.html.here" data-i18n-attr="placeholder"></textarea>
+        <div class="btnrow" style="justify-content:flex-start; margin-top:10px;">
+          <button class="secondary" id="btnPreviewDetail" type="button" data-i18n="adm.preview.detail"></button>
+        </div>
+
+        <table class="label-table">
+          <tr>
+            <td>
+              <label data-i18n="adm.business.canvas"></label>
+            </td>
+            <td class="cell-right">
+              <button
+                  type="button"
+                  class="template-btn"
+                  data-template-url="https://www.yourvrexperience.com/courses/spinuoc/PROJECT_CANVAS_TEMPLATE.pdf"
+                  data-i18n="word.template.canvas">
+               </button>        
+            </td>
+          </tr>
+        </table>        
+        <input id="canvas" type="url" placeholder="https://.../canvas.pdf" />
+        <details id="canvasDetails">
+          <summary data-i18n="adm.preview.pdf.canvas"></summary>
+          <div class="preview">
+            <iframe id="canvasFrame" src=""></iframe>
+          </div>
+        </details>
+
+        <table class="label-table">
+          <tr>
+            <td>
+              <label data-i18n="adm.summary.pdf.url"></label>
+            </td>
+            <td class="cell-right">
+              <button
+                  type="button"
+                  class="template-btn"
+                  data-template-url="https://www.yourvrexperience.com/courses/spinuoc/EXECUTIVE_SUMMARY_TEMPLATE.pdf"
+                  data-i18n="word.template.summary">
+               </button>        
+            </td>
+          </tr>
+        </table>
+        <input id="summary" type="url" placeholder="https://.../summary.pdf" />        
+        <details id="summaryDetails">
+          <summary data-i18n="adm.preview.summary.pdf"></summary>
+          <div class="preview">
+            <iframe id="summaryFrame" src=""></iframe>
+          </div>
+        </details>
+
+        <table class="label-table">
+          <tr>
+            <td>
+              <label data-i18n="adm.pitch.video.url"></label>
+            </td>
+            <td class="cell-right">
+              <button
+                  type="button"
+                  class="template-btn"
+                  data-template-url="https://www.yourvrexperience.com/courses/spinuoc/VIDEO_PITCH_SCRIPT_TEMPLATE.pdf"
+                  data-i18n="word.template.script">
+               </button>
+            </td>
+          </tr>
+        </table>        
+        <input id="videopitch" type="url" placeholder="https://www.youtube.com/..." />
+        <details id="videoDetails">
+          <summary data-i18n="adm.preview.video.url"></summary>
+          <div class="preview">
+            <iframe id="videoFrame" src="" allowfullscreen></iframe>
+            <div class="sub" style="margin-top:8px;" data-i18n="adm.description.youtube.video.url">
+            </div>
+          </div>
+        </details>
+
+        <label data-i18n="adm.video.pitch.script"></label>
+        <textarea id="script" data-i18n="adm.paste.script.here" data-i18n-attr="placeholder"></textarea>
+
+        <div id="msg" class="msg"></div>
+      </div>
+
+      <!-- Right: score + evaluation -->
+      <div class="card">
+        <h3 data-i18n="adm.score.and.evaluation"></h3>
+
+        <label data-i18n="adm.score"></label>
+        <input id="score" type="text" disabled />
+
+        <div style="margin-top:12px;" id="evaluationMount"></div>
+
+        <div class="sub" style="margin-top:10px;" data-i18n="adm.evaluation.show.ui">          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluation Prompt Overlay -->
+  <div id="evalOverlay" class="overlay" style="display:none;">
+    <div class="overlay-content" style="max-width:900px; width:92%; height:auto; max-height:90vh; overflow:auto;">
+      <button class="close-btn" id="closeEvalOverlay">&times;</button>
+      <h3 style="margin:0 0 8px 0;" data-i18n="adm.ai.prompt.engineering"></h3>
+      <div class="sub" style="margin-bottom:10px;" data-i18n="adm.confirm.to.send.prompt">
+      </div>
+
+      <label style="margin-top:0;" data-i18n="adm.prompt.preview"></label>
+      <textarea id="evalPromptPreview" readonly style="width:100%; min-height:460px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;"></textarea>
+
+      <div class="btnrow" style="justify-content:flex-end; margin-top:12px; gap:8px;">
+        <button class="secondary" id="btnEvalCancel" type="button" data-i18n="word.cancel"></button>
+        <button class="primary" id="btnEvalConfirm" type="button" data-i18n="adm.confirm.and.evaluate"></button>
+      </div>
+
+      <div id="evalOverlayMsg" class="msg" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+
+<!-- Detail Preview Overlay -->
+<div id="detailOverlay" class="overlay">
+  <div class="overlay-content">
+    <button class="close-btn" id="closeDetailOverlay">&times;</button>
+    <iframe id="overlayDetailFrame" title="Detail Preview"></iframe>
+    <div id="overlayMessage">
+      <p id="overlayMessageText"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Conversation Overlay -->
+<div id="conversationOverlay" class="overlay" style="display:none;">
+  <div class="overlay-content" style="max-width:900px; width:92%; height:90vh; overflow:auto;">
+    <button class="close-btn" id="closeConversationOverlay">&times;</button>
+    <div id="sc-overlay-body"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { AdministrationLayout } from "./js/AdministrationLayout.js";
+  const page = new AdministrationLayout();
+  page.init();
+</script>
+
+</body>
+</html>
