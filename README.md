@@ -1,10 +1,3 @@
-Love this project’s philosophy—*“leave no one with potential behind”* is a strong north star. 🙌
-Based on everything you shared, here’s a **clean, professional, GitHub-ready README** you can use as a starting point. It’s written to be understandable for developers, educators, and accelerator managers alike.
-
-You can copy-paste this directly into `README.md` and tweak naming or links as needed.
-
----
-
 # Ranking Projects Platform
 
 An open-source platform to **evaluate, classify, and connect entrepreneurial projects** using AI-assisted assessment, gamified rankings, and human feedback.
