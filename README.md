@@ -1,5 +1,7 @@
 # Ranking Projects Platform
 
+This project is open-source under the MIT license.
+
 An open-source platform to **evaluate, classify, and connect entrepreneurial projects** using AI-assisted assessment, gamified rankings, and human feedback.
 
 This project is designed to help **hidden talent get discovered**, uncover **meaningful connections across large datasets**, and create **new opportunities beyond traditional “winner-takes-all” entrepreneurship programs**.
