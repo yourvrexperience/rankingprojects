@@ -14,6 +14,7 @@ import pdfplumber
 import aiohttp
 import io
 from pydantic import BaseModel, Field
+from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts.prompt import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
@@ -35,7 +36,8 @@ if not JWT_SECRET:
 JWT_SECRET_BYTES = JWT_SECRET.encode("utf-8")
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-    
+apikey_openrouter = os.getenv("OPENROUTER_API_KEY")
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5500", "http://localhost:5500", "http://localhost:8080", "http://127.0.0.1:8080"]}})
 
@@ -47,11 +49,16 @@ db_config = {
     'database': 'test'
 }
 
-llm_model = "gpt-5-mini"
+name_model = "gpt-5-mini"
 
 # ############################################
 # DATA STRUCTURES
 # ############################################
+# MODEL SELECTION
+model_llm = ChatOpenAI(model=name_model, temperature=1)
+# model_llm = ChatOllama(model="gpt-oss:latest", base_url="URL_OR_TUNNEL_TO_YOUR_LOCAL_SERVER", temperature=0.7, num_ctx=8192) # SLOW MODEL WITH JSON OUTPUT
+# model_llm = ChatOllama(model="qwen2.5:7b", base_url="URL_OR_TUNNEL_TO_YOUR_LOCAL_SERVER", temperature=0.7, num_ctx=8192)  # FAST MODEL WITH JSON OUTPUT
+# model_llm = ChatOpenAI( openai_api_key=apikey_openrouter, openai_api_base='https://openrouter.ai/api/v1', model_name=name_model, model_kwargs={}, default_headers={ "HTTP-Referer": "https://www.workflowsimulator.com", "X-Title": "Ranking Projects"});
 
 # Langchain class format for "/evaluate"
 class EvaluationResult(BaseModel):
@@ -68,8 +75,7 @@ evaluation_prompt = PromptTemplate(
     input_variables=["query"],
     partial_variables={"format_instructions": evaluation_parser.get_format_instructions()},
 )
-evaluation_llm = ChatOpenAI(model=llm_model, temperature=1)
-evaluation_chain = evaluation_prompt | evaluation_llm | evaluation_parser
+evaluation_chain = evaluation_prompt | model_llm | evaluation_parser
 
 # Langchain class format for "/compareprojects"
 class ProjectComparisonItem(BaseModel):
@@ -89,8 +95,7 @@ compare_prompt = PromptTemplate(
     input_variables=["query"],
     partial_variables={"format_instructions": compare_parser.get_format_instructions()},
 )
-compare_llm = ChatOpenAI(model=llm_model, temperature=1)
-compare_chain = compare_prompt | compare_llm | compare_parser
+compare_chain = compare_prompt | model_llm | compare_parser
 
 # Langchain class format for "/findoutcategory"
 class FindCategoryResult(BaseModel):
@@ -106,8 +111,7 @@ find_category_prompt = PromptTemplate(
     input_variables=["query"],
     partial_variables={"format_instructions": find_category_parser.get_format_instructions()},
 )
-find_category_llm = ChatOpenAI(model=llm_model, temperature=1)
-find_category_chain = find_category_prompt | find_category_llm | find_category_parser
+find_category_chain = find_category_prompt | model_llm | find_category_parser
 
 
 # ############################################
